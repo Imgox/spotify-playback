@@ -35,9 +35,12 @@ function App() {
       .then((response) => {
         setNowPlaying({
           song: response.item ? response.item.name : "nothing is playing",
-          img: response.item ? response.item.album.images[0].url : "",
+          img: response.item ? response.item.album.images[1].url : "",
         });
         setIsplaying(response.is_playing ? response.is_playing : false);
+        document.querySelector(
+          ".bg"
+        ).style.backgroundImage = `url('${response.item.album.images[0].url}')`;
       })
       .catch((err) => {
         console.log(err);
@@ -45,6 +48,7 @@ function App() {
   }, []);
   return (
     <div className="App">
+      <div className="bg"></div>
       <a
         href="http://localhost:8888/login"
         style={{ display: loggedIn ? "none" : "block" }}
@@ -52,16 +56,18 @@ function App() {
         <button>Login to spotify</button>
       </a>
       <div style={{ display: loggedIn ? "block" : "none" }}>
-        <h1>Now playing</h1>
-        <h3>{nowPlaying.song}</h3>
         <img src={nowPlaying.img} alt="" />
+        <h3>{nowPlaying.song}</h3>
+
         <div>
-          <button
+          <i
+            id="playPause"
+            className={isplaying ? "fas fa-pause" : "fas fa-play"}
             onClick={() => {
               if (isplaying) {
                 spotifyWepApi
                   .pause()
-                  .then((response) => {
+                  .then(() => {
                     setIsplaying(false);
                   })
                   .catch((err) => {
@@ -78,9 +84,7 @@ function App() {
                   });
               }
             }}
-          >
-            {isplaying ? "Pause" : "Play"}
-          </button>
+          ></i>
         </div>
       </div>
     </div>
